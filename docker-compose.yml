@@ -1,0 +1,43 @@
+version: '2'
+services:
+  #######################################
+  # Node application Docker container
+  #######################################
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile.development
+    links:
+      - mariaDB
+    ports:
+      - "8000:80"
+      - "8443:443"
+      - "10022:22"
+    volumes:
+      - ./app/:/app/
+      - ./:/docker/
+    # cap and privileged needed for slowlog
+    cap_add:
+      - SYS_PTRACE
+    privileged: true
+    env_file:
+      - etc/environment.yml
+      - etc/environment.development.yml
+    environment:
+
+
+
+
+  #######################################
+  # MariaDB server
+  #######################################
+  mysql:
+    build:
+      context: docker/mariadb/
+      #dockerfile: ...
+    ports:
+      - 13306:3306
+    volumes:
+    env_file:
+      - etc/environment.yml
+      - etc/environment.development.yml
